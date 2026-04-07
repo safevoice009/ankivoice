@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AnkiVoice | The Elite AI Voice Agent for Anki</title>
+    <meta name="description" content="Master your Anki cards hands-free with AnkiVoice. A world-class AI voice agent featuring local Whisper STT and Piper TTS.">
+    <meta name="keywords" content="Anki, AnkiDroid, Voice Agent, AI Study, Hands-free, Active Recall, Whisper.cpp, Piper TTS">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #007ACC;
+            --secondary: #7B1FA2;
+            --accent: #00C853;
+            --bg: #0a0a0c;
+            --glass: rgba(255, 255, 255, 0.05);
+            --border: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background: var(--bg);
+            color: #fff;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        .gradient-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 50% 50%, #1a1a2e 0%, #0a0a0c 100%);
+            z-index: -1;
+        }
+
+        .glass-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .logo {
+            font-weight: 800;
+            font-size: 1.5rem;
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 8rem 0;
+            animation: fadeIn 1s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .hero h1 {
+            font-size: 4.5rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            letter-spacing: -2px;
+        }
+
+        .hero p {
+            font-size: 1.4rem;
+            color: #ccc;
+            max-width: 700px;
+            margin: 0 auto 3rem;
+            font-weight: 300;
+        }
+
+        .hero-image {
+            width: 280px;
+            margin-bottom: 2rem;
+            filter: drop-shadow(0 0 30px rgba(0, 122, 204, 0.4));
+            animation: float 4s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .cta-btn {
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 1.2rem 2.8rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            display: inline-block;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .cta-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(0, 122, 204, 0.6);
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 4rem;
+        }
+
+        .card {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            padding: 2.5rem;
+            border-radius: 24px;
+            backdrop-filter: blur(12px);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            border-color: var(--primary);
+            transform: translateY(-10px);
+        }
+
+        .card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        .card p {
+            color: #aaa;
+        }
+
+        footer {
+            text-align: center;
+            padding: 4rem 0;
+            color: #666;
+            font-size: 0.9rem;
+            border-top: 1px solid var(--border);
+            margin-top: 6rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="gradient-bg"></div>
+    <div class="glass-container">
+        <nav>
+            <div class="logo">AnkiVoice</div>
+            <a href="https://github.com/safevoice009/podcards-ai-engine" class="cta-btn" style="padding: 0.6rem 1.5rem; font-size: 0.9rem;">View GitHub</a>
+        </nav>
+
+        <section class="hero">
+            <img src="assets/ankivoice_hybrid.png" alt="AnkiVoice Icon" class="hero-image">
+            <h1>Master Knowledge.<br><span style="color: var(--primary)">Hands-Free.</span></h1>
+            <p>Transform your Anki decks into interactive, AI-powered audio sessions. Powered by state-of-the-art local neural engines.</p>
+            <a href="https://github.com/safevoice009/podcards-ai-engine/releases" class="cta-btn">Download v1.1.0-alpha</a>
+        </section>
+
+        <div class="features">
+            <div class="card">
+                <h3>Local AI STT</h3>
+                <p>Whisper.cpp integration for ultra-fast, offline speech-to-text. Grade your cards with natural voice commands.</p>
+            </div>
+            <div class="card">
+                <h3>Neural TTS</h3>
+                <p>Realistic, high-fidelity voices via Piper. Your study sessions now feel like a premium podcast conversation.</p>
+            </div>
+            <div class="card">
+                <h3>Zero Tracking</h3>
+                <p>Private, local-first architecture. Your study data and voice never leave your device.</p>
+            </div>
+        </div>
+
+        <footer>
+            &copy; 2026 SafeVoice009. Built for the Global Anki Community.
+        </footer>
+    </div>
+</body>
+</html>

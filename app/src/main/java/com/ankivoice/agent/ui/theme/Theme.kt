@@ -1,4 +1,4 @@
-package com.antigravity.podcards.ui.theme
+package com.ankivoice.agent.ui.theme
 
 import android.app.Activity
 import android.os.Build
@@ -41,7 +41,7 @@ private val LightColorScheme = lightColorScheme(
 )
 
 @Composable
-fun PodCardsTheme(
+fun AnkiVoiceTheme(
     darkTheme: Boolean = false,
     content: @Composable () -> Unit
 ) {

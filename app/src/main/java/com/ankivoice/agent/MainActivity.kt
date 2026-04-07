@@ -1,4 +1,4 @@
-package com.antigravity.podcards
+package com.ankivoice.agent
 
 import android.Manifest
 import android.content.pm.PackageManager
@@ -31,25 +31,25 @@ import androidx.core.content.ContextCompat
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.*
-import com.antigravity.podcards.ui.theme.PodCardsTheme
-import com.antigravity.podcards.ui.theme.PrimaryColor
-import com.antigravity.podcards.ui.screens.*
+import com.ankivoice.agent.ui.theme.AnkiVoiceTheme
+import com.ankivoice.agent.ui.theme.PrimaryColor
+import com.ankivoice.agent.ui.screens.*
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            PodCardsApp()
+            AnkiVoiceApp()
         }
     }
 }
 
 @Composable
-fun PodCardsApp(themeViewModel: com.antigravity.podcards.ui.viewmodel.ThemeViewModel = androidx.lifecycle.viewmodel.compose.viewModel()) {
+fun AnkiVoiceApp(themeViewModel: com.ankivoice.agent.ui.viewmodel.ThemeViewModel = androidx.lifecycle.viewmodel.compose.viewModel()) {
     val navController = rememberNavController()
     val isDark = themeViewModel.isDarkMode.value
     
-    PodCardsTheme(darkTheme = isDark) {
+    AnkiVoiceTheme(darkTheme = isDark) {
         val context = LocalContext.current
         
         var permissionsGranted by remember {
@@ -179,7 +179,7 @@ fun PermissionRequiredOverlay(onRetry: () -> Unit) {
         Text("Connect AnkiDroid", style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Black))
         Spacer(modifier = Modifier.height(12.dp))
         Text(
-            "PodCards needs access to your Anki database to generate voice sessions from your cards.",
+            "AnkiVoice needs access to your Anki database to generate voice sessions from your cards.",
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
@@ -197,9 +197,9 @@ fun PermissionRequiredOverlay(onRetry: () -> Unit) {
 @Composable
 fun AppNavigation(
     navController: androidx.navigation.NavHostController,
-    themeViewModel: com.antigravity.podcards.ui.viewmodel.ThemeViewModel,
+    themeViewModel: com.ankivoice.agent.ui.viewmodel.ThemeViewModel,
     permissionLauncher: androidx.activity.result.ActivityResultLauncher<Array<String>>,
-    viewModel: com.antigravity.podcards.ui.viewmodel.PodcastAgentViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
+    viewModel: com.ankivoice.agent.ui.viewmodel.PodcastAgentViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
 ) {
     NavHost(navController = navController, startDestination = "decks") {
         composable("decks") {

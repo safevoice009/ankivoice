@@ -1,4 +1,4 @@
-package com.antigravity.podcards.ai
+package com.ankivoice.agent.ai
 
 import android.content.Context
 import android.util.Log
@@ -13,9 +13,9 @@ class WhisperEngine(private val context: Context) {
         fun loadLibrary() {
             if (!isLibraryLoaded) {
                 try {
-                    System.loadLibrary("whisper")
+                    System.loadLibrary("ankivoice")
                     isLibraryLoaded = true
-                    Log.d("WhisperEngine", "Native library 'whisper' loaded successfully")
+                    Log.d("WhisperEngine", "Native library 'ankivoice' loaded successfully")
                 } catch (e: Exception) {
                     Log.e("WhisperEngine", "Failed to load native library: ${e.message}")
                 }

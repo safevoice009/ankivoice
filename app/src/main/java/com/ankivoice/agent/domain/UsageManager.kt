@@ -1,4 +1,4 @@
-package com.antigravity.podcards.domain
+package com.ankivoice.agent.domain
 
 import android.content.Context
 import kotlinx.coroutines.flow.Flow

@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "com.antigravity.podcards"
+    namespace = "com.ankivoice.agent"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.antigravity.podcards"
+        applicationId = "com.ankivoice.agent"
         minSdk = 26
         targetSdk = 34
         versionCode = 1

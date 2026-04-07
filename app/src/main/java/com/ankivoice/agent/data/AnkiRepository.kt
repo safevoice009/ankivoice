@@ -1,4 +1,4 @@
-package com.antigravity.podcards.data
+package com.ankivoice.agent.data
 
 import android.content.ContentResolver
 import android.content.ContentValues
@@ -7,7 +7,7 @@ import android.database.Cursor
 import android.net.Uri
 import android.text.Html
 import android.util.Log
-import com.antigravity.podcards.ui.screens.Deck
+import com.ankivoice.agent.ui.screens.Deck
 import com.ichi2.anki.FlashCardsContract
 import com.ichi2.anki.api.AddContentApi
 import com.ichi2.anki.api.Utils
@@ -35,7 +35,7 @@ class AnkiRepository(private val context: Context) {
         
         // We use the Note CONTENT_URI for simple fetching.
         // In a real app, we would use the ReviewInfo.CONTENT_URI to get ONLY due cards.
-        // But for this PodCards MVP, we'll fetch cards from the selected deck.
+        // But for this AnkiVoice MVP, we'll fetch cards from the selected deck.
         val projection = arrayOf(
             FlashCardsContract.Note._ID,
             FlashCardsContract.Note.FLDS
@@ -83,8 +83,8 @@ class AnkiRepository(private val context: Context) {
         // Fallback to mock cards if empty
         if (notes.isEmpty()) {
             Log.i("AnkiRepository", "Deck $deckId is empty, providing mock cards fallback")
-            notes.add(AnkiNote(-1L, "Welcome to PodCards! This is a sample card. What is the goal of this app?", "To help you study Anki cards hands-free using your voice."))
-            notes.add(AnkiNote(-2L, "How do you answer a card in PodCards?", "Just speak your answer after the agent asks the question."))
+            notes.add(AnkiNote(-1L, "Welcome to AnkiVoice! This is a sample card. What is the goal of this app?", "To help you study Anki cards hands-free using your voice."))
+            notes.add(AnkiNote(-2L, "How do you answer a card in AnkiVoice?", "Just speak your answer after the agent asks the question."))
             notes.add(AnkiNote(-3L, "Does this app support offline study?", "Yes, the AI engines for voice and ear run entirely on your device."))
         }
         

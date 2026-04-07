@@ -1,13 +1,13 @@
-package com.antigravity.podcards.ui.viewmodel
+package com.ankivoice.agent.ui.viewmodel
 
 import android.app.Application
 import android.content.Context
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.antigravity.podcards.ai.PiperEngine
-import com.antigravity.podcards.ai.WhisperEngine
-import com.antigravity.podcards.data.AnkiNote
-import com.antigravity.podcards.data.AnkiRepository
+import com.ankivoice.agent.ai.PiperEngine
+import com.ankivoice.agent.ai.WhisperEngine
+import com.ankivoice.agent.data.AnkiNote
+import com.ankivoice.agent.data.AnkiRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow

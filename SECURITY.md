@@ -2,7 +2,7 @@
 
 ## Supported Versions
 
-We only support the latest version of PodCards. Please update your app regularly.
+We only support the latest version of AnkiVoice. Please update your app regularly.
 
 | Version | Supported          |
 | ------- | ------------------ |
@@ -13,4 +13,4 @@ We only support the latest version of PodCards. Please update your app regularly
 
 If you discover a security vulnerability, please report it via GitHub Issues by using the "Security" label, or if it is a sensitive issue, please contact the maintainers directly.
 
-We appreciate your help in keeping PodCards secure for the Anki community!
+We appreciate your help in keeping AnkiVoice secure for the Anki community!

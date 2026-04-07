@@ -1,4 +1,4 @@
-package com.antigravity.podcards.ui.screens
+package com.ankivoice.agent.ui.screens
 
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
@@ -20,9 +20,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.antigravity.podcards.ui.viewmodel.PodcastAgentViewModel
-import com.antigravity.podcards.ui.viewmodel.StudyUiState
-import com.antigravity.podcards.ui.theme.*
+import com.ankivoice.agent.ui.viewmodel.PodcastAgentViewModel
+import com.ankivoice.agent.ui.viewmodel.StudyUiState
+import com.ankivoice.agent.ui.theme.*
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Button
 import androidx.compose.foundation.shape.RoundedCornerShape

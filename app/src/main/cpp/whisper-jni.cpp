@@ -9,7 +9,7 @@
 #define LOGE(...) __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__)
 
 extern "C" JNIEXPORT jlong JNICALL
-Java_com_antigravity_podcards_ai_WhisperEngine_initContext(
+Java_com_ankivoice_agent_ai_WhisperEngine_initContext(
         JNIEnv* env,
         jobject /* this */,
         jstring modelPath) {
@@ -29,7 +29,7 @@ Java_com_antigravity_podcards_ai_WhisperEngine_initContext(
 }
 
 extern "C" JNIEXPORT jstring JNICALL
-Java_com_antigravity_podcards_ai_WhisperEngine_fullTranscribe(
+Java_com_ankivoice_agent_ai_WhisperEngine_fullTranscribe(
         JNIEnv* env,
         jobject /* this */,
         jlong contextPtr,
@@ -65,7 +65,7 @@ Java_com_antigravity_podcards_ai_WhisperEngine_fullTranscribe(
 }
 
 extern "C" JNIEXPORT void JNICALL
-Java_com_antigravity_podcards_ai_WhisperEngine_freeContext(
+Java_com_ankivoice_agent_ai_WhisperEngine_freeContext(
         JNIEnv* env,
         jobject /* this */,
         jlong contextPtr) {

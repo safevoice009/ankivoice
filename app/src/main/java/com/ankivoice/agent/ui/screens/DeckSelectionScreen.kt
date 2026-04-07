@@ -1,4 +1,4 @@
-package com.antigravity.podcards.ui.screens
+package com.ankivoice.agent.ui.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -16,8 +16,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.style.TextAlign
-import com.antigravity.podcards.ui.theme.*
-import com.antigravity.podcards.ui.viewmodel.PodcastAgentViewModel
+import com.ankivoice.agent.ui.theme.*
+import com.ankivoice.agent.ui.viewmodel.PodcastAgentViewModel
 
 @Composable
 fun DeckSelectionScreen(
@@ -25,7 +25,7 @@ fun DeckSelectionScreen(
     onDeckSelected: (Long, String) -> Unit,
     onSyncRequest: () -> Unit
 ) {
-    val repository = com.antigravity.podcards.data.AnkiRepository(androidx.compose.ui.platform.LocalContext.current)
+    val repository = com.ankivoice.agent.data.AnkiRepository(androidx.compose.ui.platform.LocalContext.current)
     var decks by remember { mutableStateOf(emptyList<Deck>()) }
     
     LaunchedEffect(Unit) {
@@ -37,7 +37,7 @@ fun DeckSelectionScreen(
         topBar = {
             Column(modifier = Modifier.padding(24.dp).padding(top = 16.dp)) {
                 Text(
-                    text = "PodCards",
+                    text = "AnkiVoice",
                     style = MaterialTheme.typography.headlineLarge.copy(
                         fontWeight = FontWeight.Black,
                         letterSpacing = (-1.5).sp

@@ -1,6 +1,6 @@
-# Contributing to PodCards
+# Contributing to AnkiVoice
 
-First off, thanks for taking the time to contribute! PodCards is an open-source project aimed at making study sessions more engaging through AI-powered audio.
+First off, thanks for taking the time to contribute! AnkiVoice is an open-source project aimed at making study sessions more engaging through AI-powered audio.
 
 ## How Can I Contribute?
 

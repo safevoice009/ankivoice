@@ -1,4 +1,4 @@
-package com.antigravity.podcards.ai
+package com.ankivoice.agent.ai
 
 import android.annotation.SuppressLint
 import android.media.AudioFormat

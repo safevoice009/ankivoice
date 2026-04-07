@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.22.1)
 
-project("podcards")
+project("ankivoice")
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -55,18 +55,18 @@ set(WHISPER_SOURCES
     whisper-jni.cpp
 )
 
-add_library(whisper SHARED
+add_library(ankivoice SHARED
     ${GGML_SOURCES}
     ${WHISPER_SOURCES}
 )
 
-target_compile_definitions(whisper PRIVATE
+target_compile_definitions(ankivoice PRIVATE
     GGML_BUILD_NUMBER=1
     GGML_USE_CPU
     WHISPER_BUILD_NUMBER=1
 )
 
-target_include_directories(whisper PRIVATE
+target_include_directories(ankivoice PRIVATE
     .
     include
     src
@@ -75,7 +75,7 @@ target_include_directories(whisper PRIVATE
     ggml/src/ggml-cpu
 )
 
-target_link_libraries(whisper
+target_link_libraries(ankivoice
     log
     android
     dl

@@ -1,4 +1,4 @@
-package com.antigravity.podcards.ui.viewmodel
+package com.ankivoice.agent.ui.viewmodel
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
