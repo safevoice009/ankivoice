@@ -1,0 +1,21 @@
+# Android
+build/
+.gradle/
+local.properties
+*.iml
+.idea/
+.DS_Store
+captures/
+.externalNativeBuild
+.cxx
+/google-services.json
+
+# User-specific
+*.user
+*.swp
+*.bak
+*.tmp
+
+# Piper/Whisper models (Too large for git usually, recommend downloading separately)
+*.bin
+*.onnx
