@@ -97,8 +97,13 @@ fun StudyStateContent(state: StudyUiState, textColor: Color, onRetry: () -> Unit
         modifier = Modifier.fillMaxWidth()
     ) {
         when (state) {
-            is StudyUiState.Loading, is StudyUiState.Configuring -> {
-                Text("INITIALIZING AI AGENT...", style = StatusTextStyle.copy(color = textColor.copy(alpha = 0.5f)))
+            is StudyUiState.Loading -> {
+                Text(state.message, style = StatusTextStyle.copy(color = textColor.copy(alpha = 0.5f)))
+                Spacer(modifier = Modifier.height(16.dp))
+                CircularProgressIndicator(color = AccentColor)
+            }
+            is StudyUiState.Configuring -> {
+                Text("CONFIGURING SESSION...", style = StatusTextStyle.copy(color = textColor.copy(alpha = 0.5f)))
                 Spacer(modifier = Modifier.height(16.dp))
                 CircularProgressIndicator(color = AccentColor)
             }

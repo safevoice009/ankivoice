@@ -80,12 +80,16 @@ class AnkiRepository(private val context: Context) {
         
         Log.d("AnkiRepository", "Fetched ${notes.size} cards for deck $deckId")
         
-        // Fallback to mock cards if empty
+        // Fallback to mock cards if empty or deck not found
         if (notes.isEmpty()) {
-            Log.i("AnkiRepository", "Deck $deckId is empty, providing mock cards fallback")
-            notes.add(AnkiNote(-1L, "Welcome to AnkiVoice! This is a sample card. What is the goal of this app?", "To help you study Anki cards hands-free using your voice."))
-            notes.add(AnkiNote(-2L, "How do you answer a card in AnkiVoice?", "Just speak your answer after the agent asks the question."))
-            notes.add(AnkiNote(-3L, "Does this app support offline study?", "Yes, the AI engines for voice and ear run entirely on your device."))
+            if (deckId == -1L) {
+                Log.w("AnkiRepository", "No decks found in AnkiDroid. Providing sample deck cards.")
+            } else {
+                Log.i("AnkiRepository", "Deck $deckId is empty or not accessible. Providing mock cards fallback.")
+            }
+            notes.add(AnkiNote(-1L, "Welcome to AnkiVoice Agent!", "This is a sample card to help you get started. What is the goal of this app?"))
+            notes.add(AnkiNote(-2L, "How do you study hands-free?", "Just listen to the agent and speak your answer and grade when prompted."))
+            notes.add(AnkiNote(-3L, "Is this study session offline?", "Yes, all AI voice processing happens entirely on your device."))
         }
         
         return notes

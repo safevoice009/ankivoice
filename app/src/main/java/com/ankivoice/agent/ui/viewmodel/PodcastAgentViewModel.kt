@@ -22,7 +22,7 @@ class PodcastAgentViewModel(application: Application) : AndroidViewModel(applica
     private val whisperEngine = WhisperEngine(application)
     private val piperEngine = PiperEngine(application)
 
-    private val _uiState = MutableStateFlow<StudyUiState>(StudyUiState.Loading)
+    private val _uiState = MutableStateFlow<StudyUiState>(StudyUiState.Loading("STARTING..."))
     val uiState: StateFlow<StudyUiState> = _uiState
 
     private var currentDeckId: Long = 0L
@@ -37,7 +37,7 @@ class PodcastAgentViewModel(application: Application) : AndroidViewModel(applica
 
     fun initializeEngines() {
         viewModelScope.launch(Dispatchers.IO) {
-            _uiState.value = StudyUiState.Loading
+            _uiState.value = StudyUiState.Loading("CHECKING MODELS...")
             try {
                 // Pre-check for required model files in assets
                 val assetsList = context.assets.list("models") ?: emptyArray()
@@ -51,9 +51,11 @@ class PodcastAgentViewModel(application: Application) : AndroidViewModel(applica
                     return@launch
                 }
 
+                _uiState.value = StudyUiState.Loading("INITIALIZING WHISPER...")
                 android.util.Log.d("PodcastAgentViewModel", "Initializing Whisper engine...")
                 val wError = whisperEngine.initialize("ggml-tiny.en.bin")
                 
+                _uiState.value = StudyUiState.Loading("INITIALIZING PIPER...")
                 android.util.Log.d("PodcastAgentViewModel", "Initializing Piper engine...")
                 val pError = piperEngine.initialize("en_US-lessac-low.onnx")
                 
@@ -93,7 +95,7 @@ class PodcastAgentViewModel(application: Application) : AndroidViewModel(applica
         currentIndex = 0
         
         viewModelScope.launch(Dispatchers.IO) {
-            _uiState.value = StudyUiState.Loading
+            _uiState.value = StudyUiState.Loading("FETCHING CARDS...")
             android.util.Log.d("PodcastAgentViewModel", "Fetching cards for deck: $deckId")
             val allNotes = ankiRepository.getDueCards(deckId)
             android.util.Log.d("PodcastAgentViewModel", "AnkiRepository returned ${allNotes.size} cards")
@@ -168,7 +170,7 @@ class PodcastAgentViewModel(application: Application) : AndroidViewModel(applica
 }
 
 sealed class StudyUiState {
-    object Loading : StudyUiState()
+    data class Loading(val message: String = "INITIALIZING AI AGENT...") : StudyUiState()
     object Ready : StudyUiState()
     data class Configuring(val deckId: Long) : StudyUiState()
     data class SpeakingQuestion(val text: String) : StudyUiState()
