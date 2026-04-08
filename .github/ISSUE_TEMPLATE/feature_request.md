@@ -1,6 +1,6 @@
 ---
 name: Feature request
-about: Suggest an idea for PodCards
+about: Suggest an idea for AnkiVoice Agent
 title: "[FEATURE] "
 labels: enhancement
 assignees: ''

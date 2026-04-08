@@ -574,7 +574,7 @@ Before giving you the exact prompt to paste into Antigravity, here is your **App
 To maximize organic downloads and income, the app name needs to explicitly state what it does while sounding premium.
 
 *   **Top App Name Ideas:**
-    *   **PodCards: Voice for Anki** _(Highly recommended - implies the podcast feel)_
+    *   **AnkiVoice Agent: Voice for Anki** _(Highly recommended - implies the podcast feel)_
     *   **Echo: Anki Voice Agent**
     *   **Vocalize for AnkiDroid**
     *   **Aura: Hands-Free Flashcards**
@@ -590,7 +590,7 @@ _Copy everything below this line and paste it directly into your AI agent in Ant
 
 **System Role:** You are a Staff-Level Android Kotlin Architect and an Expert UI/UX Designer specializing in the "Not Boring" (Andy Works) design language.
 
-**Project Overview:** Build a production-ready, 100% offline Android companion app for AnkiDroid named "PodCards". It acts as a conversational "Podcast Agent" that allows users to review flashcards hands-free. It uses local Piper TTS for speaking, local Whisper.cpp for listening, and reads/writes directly to the user's AnkiDroid database via ContentProvider.
+**Project Overview:** Build a production-ready, 100% offline Android companion app for AnkiDroid named "AnkiVoice Agent". It acts as a conversational "Podcast Agent" that allows users to review flashcards hands-free. It uses local Piper TTS for speaking, local Whisper.cpp for listening, and reads/writes directly to the user's AnkiDroid database via ContentProvider.
 
 **STRICT TECHNICAL CONSTRAINTS:**
 
