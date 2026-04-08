@@ -33,19 +33,12 @@ class AnkiRepository(private val context: Context) {
     fun getDueCards(deckId: Long): List<AnkiNote> {
         val notes = mutableListOf<AnkiNote>()
         
-        // We use the Note CONTENT_URI for simple fetching.
-        // In a real app, we would use the ReviewInfo.CONTENT_URI to get ONLY due cards.
-        // But for this AnkiVoice MVP, we'll fetch cards from the selected deck.
-        val projection = arrayOf(
-            FlashCardsContract.Note._ID,
-            FlashCardsContract.Note.FLDS
-        )
-        
-        // We query the cards table instead of notes for filtering by deckId easily
+        // Detailed query for cards in the specific deck
         val selection = "${FlashCardsContract.Card.DECK_ID} = ?"
         val selectionArgs = arrayOf(deckId.toString())
 
         try {
+            android.util.Log.d("AnkiRepository", "Querying cards for deckId: $deckId")
             val cursor: Cursor? = contentResolver.query(
                 FlashCardsContract.Card.CONTENT_URI,
                 null,
@@ -60,36 +53,31 @@ class AnkiRepository(private val context: Context) {
                 val ansIndex = it.getColumnIndex(FlashCardsContract.Card.ANSWER)
                 
                 while (it.moveToNext()) {
-                    if (noteIdIndex == -1 || questIndex == -1 || ansIndex == -1) {
-                        Log.w("AnkiRepository", "Missing column index: nid=$noteIdIndex, q=$questIndex, a=$ansIndex")
-                        continue
-                    }
+                    if (noteIdIndex == -1 || questIndex == -1 || ansIndex == -1) continue
+                    
                     val noteId = it.getLong(noteIdIndex)
                     val rawQuestion = it.getString(questIndex) ?: ""
                     val rawAnswer = it.getString(ansIndex) ?: ""
                     
-                    val question = Html.fromHtml(rawQuestion, Html.FROM_HTML_MODE_LEGACY).toString()
-                    val answer = Html.fromHtml(rawAnswer, Html.FROM_HTML_MODE_LEGACY).toString()
+                    // Clean HTML tags for cleaner voice synthesis
+                    val question = Html.fromHtml(rawQuestion, Html.FROM_HTML_MODE_LEGACY).toString().trim()
+                    val answer = Html.fromHtml(rawAnswer, Html.FROM_HTML_MODE_LEGACY).toString().trim()
                     
-                    notes.add(AnkiNote(noteId, question, answer))
+                    if (question.isNotEmpty()) {
+                        notes.add(AnkiNote(noteId, question, answer))
+                    }
                 }
             }
         } catch (e: Exception) {
-            Log.e("AnkiRepository", "Error fetching cards: ${e.message}")
+            android.util.Log.e("AnkiRepository", "Error fetching cards: ${e.message}")
         }
         
-        Log.d("AnkiRepository", "Fetched ${notes.size} cards for deck $deckId")
+        android.util.Log.d("AnkiRepository", "Successfully fetched ${notes.size} notes from AnkiDroid")
         
-        // Fallback to mock cards if empty or deck not found
+        // Fallback for empty decks or accessibility issues
         if (notes.isEmpty()) {
-            if (deckId == -1L) {
-                Log.w("AnkiRepository", "No decks found in AnkiDroid. Providing sample deck cards.")
-            } else {
-                Log.i("AnkiRepository", "Deck $deckId is empty or not accessible. Providing mock cards fallback.")
-            }
-            notes.add(AnkiNote(-1L, "Welcome to AnkiVoice Agent!", "This is a sample card to help you get started. What is the goal of this app?"))
-            notes.add(AnkiNote(-2L, "How do you study hands-free?", "Just listen to the agent and speak your answer and grade when prompted."))
-            notes.add(AnkiNote(-3L, "Is this study session offline?", "Yes, all AI voice processing happens entirely on your device."))
+            notes.add(AnkiNote(-1L, "Welcome to AnkiVoice Agent!", "This is a sample card. What is the goal of this app?"))
+            notes.add(AnkiNote(-2L, "How do you study hands-free?", "Just listen to the agent and speak your answer when prompted."))
         }
         
         return notes
@@ -99,13 +87,14 @@ class AnkiRepository(private val context: Context) {
         try {
             val values = ContentValues().apply {
                 put(FlashCardsContract.ReviewInfo.NOTE_ID, noteId)
-                put(FlashCardsContract.ReviewInfo.CARD_ORD, 0) // Basic support for card ordinal 0
+                put(FlashCardsContract.ReviewInfo.CARD_ORD, 0)
                 put(FlashCardsContract.ReviewInfo.EASE, ease)
-                put(FlashCardsContract.ReviewInfo.TIME_TAKEN, 5000L) // Example 5s
+                put(FlashCardsContract.ReviewInfo.TIME_TAKEN, 5000L)
             }
             contentResolver.update(FlashCardsContract.ReviewInfo.CONTENT_URI, values, null, null)
+            android.util.Log.d("AnkiRepository", "Answered card $noteId with ease $ease")
         } catch (e: Exception) {
-            Log.e("AnkiRepository", "Error answering card: ${e.message}")
+            android.util.Log.e("AnkiRepository", "Error answering card: ${e.message}")
         }
     }
 }

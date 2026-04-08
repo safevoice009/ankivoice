@@ -16,6 +16,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.style.TextAlign
+import android.widget.Toast
+import androidx.compose.ui.platform.LocalContext
 import com.ankivoice.agent.ui.theme.*
 import com.ankivoice.agent.ui.viewmodel.PodcastAgentViewModel
 
@@ -25,11 +27,25 @@ fun DeckSelectionScreen(
     onDeckSelected: (Long, String) -> Unit,
     onSyncRequest: () -> Unit
 ) {
-    val repository = com.ankivoice.agent.data.AnkiRepository(androidx.compose.ui.platform.LocalContext.current)
+    val context = LocalContext.current
+    val repository = remember { com.ankivoice.agent.data.AnkiRepository(context) }
     var decks by remember { mutableStateOf(emptyList<Deck>()) }
+    var isRefreshing by remember { mutableStateOf(false) }
     
+    val syncEvent by viewModel.syncEvent.collectAsState()
+
+    LaunchedEffect(syncEvent) {
+        syncEvent?.let {
+            Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+            decks = repository.getDeckList().map { d -> Deck(d.id, d.name) }
+            isRefreshing = false
+        }
+    }
+
     LaunchedEffect(Unit) {
+        isRefreshing = true
         decks = repository.getDeckList().map { Deck(it.id, it.name) }
+        isRefreshing = false
     }
 
     Scaffold(
@@ -58,14 +74,41 @@ fun DeckSelectionScreen(
                 .padding(innerPadding)
                 .padding(horizontal = 24.dp)
         ) {
+            // Using a simpler approach for refresh if PullToRefresh is not in current M3 version
+            // For now, let's just make sure we can trigger it.
             if (decks.isEmpty()) {
-                EmptyState(onSyncRequest)
+                EmptyState(onSyncRequest = {
+                    isRefreshing = true
+                    viewModel.syncWithAnkiDroid()
+                })
             } else {
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
                     verticalArrangement = Arrangement.spacedBy(20.dp),
                     contentPadding = PaddingValues(bottom = 32.dp)
                 ) {
+                    item {
+                        if (isRefreshing) {
+                            LinearProgressIndicator(
+                                modifier = Modifier.fillMaxWidth().height(2.dp),
+                                color = PrimaryColor
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+                        } else {
+                            // Subtle sync hint
+                            Text(
+                                "Pull down to sync",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.fillMaxWidth().clickable { 
+                                    isRefreshing = true
+                                    viewModel.syncWithAnkiDroid()
+                                }
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+                        }
+                    }
                     itemsIndexed(decks) { index, deck ->
                         PremiumDeckCard(deck, index, onDeckSelected)
                     }

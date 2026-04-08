@@ -17,6 +17,7 @@ class PiperEngine(private val context: Context) {
     private var piper: PiperJNI? = null
     private var voice: PiperVoice? = null
     private var audioTrack: AudioTrack? = null
+    private var playbackSpeed: Float = 1.0f
 
     fun release() {
         voice = null
@@ -24,6 +25,21 @@ class PiperEngine(private val context: Context) {
         audioTrack?.stop()
         audioTrack?.release()
         audioTrack = null
+    }
+
+    fun setSpeed(speed: Float) {
+        playbackSpeed = speed
+        try {
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                audioTrack?.let {
+                    if (it.state == AudioTrack.STATE_INITIALIZED) {
+                        it.playbackParams = it.playbackParams.setSpeed(speed)
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            Log.e("PiperEngine", "Failed to set playback speed: ${e.message}")
+        }
     }
 
     fun initialize(modelName: String): String? {
@@ -113,6 +129,11 @@ class PiperEngine(private val context: Context) {
                     .setBufferSizeInBytes(minBufferSize * 4)
                     .setTransferMode(AudioTrack.MODE_STREAM)
                     .build()
+                
+                // Set initial speed
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                    audioTrack?.playbackParams = audioTrack?.playbackParams?.setSpeed(playbackSpeed) ?: android.media.PlaybackParams().setSpeed(playbackSpeed)
+                }
             }
 
             audioTrack?.let { track ->

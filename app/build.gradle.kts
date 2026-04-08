@@ -12,8 +12,8 @@ android {
         applicationId = "com.ankivoice.agent"
         minSdk = 26
         targetSdk = 34
-        versionCode = 2
-        versionName = "1.1.0-alpha"
+        versionCode = 3
+        versionName = "1.1.2-alpha"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {

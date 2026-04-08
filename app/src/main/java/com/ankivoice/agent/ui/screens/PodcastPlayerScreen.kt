@@ -3,10 +3,11 @@ package com.ankivoice.agent.ui.screens
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -23,9 +24,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ankivoice.agent.ui.viewmodel.PodcastAgentViewModel
 import com.ankivoice.agent.ui.viewmodel.StudyUiState
 import com.ankivoice.agent.ui.theme.*
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Button
-import androidx.compose.foundation.shape.RoundedCornerShape
 
 @Composable
 fun PodcastPlayerScreen(
@@ -83,9 +81,51 @@ fun PodcastPlayerScreen(
         Box(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .padding(bottom = 80.dp)
+                .padding(bottom = 120.dp)
         ) {
             Orb(uiState)
+        }
+
+        // Voice Speed Controls
+        SpeedControlRow(
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(bottom = 40.dp),
+            onSpeedChange = { viewModel.setVoiceSpeed(it) }
+        )
+    }
+}
+
+@Composable
+fun SpeedControlRow(modifier: Modifier = Modifier, onSpeedChange: (Float) -> Unit) {
+    var selectedSpeed by remember { mutableStateOf(1.0f) }
+    val speeds = listOf(0.8f, 1.0f, 1.25f, 1.5f)
+
+    Row(
+        modifier = modifier
+            .clip(RoundedCornerShape(20.dp))
+            .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
+            .padding(8.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        speeds.forEach { speed ->
+            val isSelected = selectedSpeed == speed
+            Surface(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(12.dp))
+                    .clickable { 
+                        selectedSpeed = speed
+                        onSpeedChange(speed)
+                    },
+                color = if (isSelected) AccentColor else Color.Transparent,
+                contentColor = if (isSelected) Color.White else MaterialTheme.colorScheme.onSurfaceVariant
+            ) {
+                Text(
+                    text = "${speed}x",
+                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
+                    style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold)
+                )
+            }
         }
     }
 }
@@ -117,7 +157,13 @@ fun StudyStateContent(state: StudyUiState, textColor: Color, onRetry: () -> Unit
             }
             is StudyUiState.Listening -> {
                 Text("YOUR TURN", style = MassiveTextStyle, color = SecondaryAccent)
+                Text("LISTENING...", style = StatusTextStyle.copy(fontSize = 14.sp, color = textColor.copy(alpha = 0.5f)))
+            }
+            is StudyUiState.Transcribing -> {
+                Text("AGENT THINKING", style = MassiveTextStyle, color = AccentColor)
                 Text("TRANSCRIBING...", style = StatusTextStyle.copy(fontSize = 14.sp, color = textColor.copy(alpha = 0.5f)))
+                Spacer(modifier = Modifier.height(16.dp))
+                CircularProgressIndicator(color = AccentColor, modifier = Modifier.size(24.dp))
             }
             is StudyUiState.SpeakingAnswer -> {
                 Text("THE TRUTH", style = StatusTextStyle, color = SecondaryAccent)

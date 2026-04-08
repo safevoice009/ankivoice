@@ -25,6 +25,9 @@ class PodcastAgentViewModel(application: Application) : AndroidViewModel(applica
     private val _uiState = MutableStateFlow<StudyUiState>(StudyUiState.Loading("STARTING..."))
     val uiState: StateFlow<StudyUiState> = _uiState
 
+    private val _syncEvent = MutableStateFlow<String?>(null)
+    val syncEvent: StateFlow<String?> = _syncEvent
+
     private var currentDeckId: Long = 0L
     private var dueNotes = mutableListOf<AnkiNote>()
     private var currentIndex = 0
@@ -39,7 +42,6 @@ class PodcastAgentViewModel(application: Application) : AndroidViewModel(applica
         viewModelScope.launch(Dispatchers.IO) {
             _uiState.value = StudyUiState.Loading("CHECKING MODELS...")
             try {
-                // Pre-check for required model files in assets
                 val assetsList = context.assets.list("models") ?: emptyArray()
                 val requiredModels = listOf("ggml-tiny.en.bin", "en_US-lessac-low.onnx")
                 val missing = requiredModels.filter { it !in assetsList }
@@ -52,27 +54,18 @@ class PodcastAgentViewModel(application: Application) : AndroidViewModel(applica
                 }
 
                 _uiState.value = StudyUiState.Loading("INITIALIZING WHISPER...")
-                android.util.Log.d("PodcastAgentViewModel", "Initializing Whisper engine...")
                 val wError = whisperEngine.initialize("ggml-tiny.en.bin")
                 
                 _uiState.value = StudyUiState.Loading("INITIALIZING PIPER...")
-                android.util.Log.d("PodcastAgentViewModel", "Initializing Piper engine...")
                 val pError = piperEngine.initialize("en_US-lessac-low.onnx")
                 
                 if (wError == null && pError == null) {
-                    android.util.Log.d("PodcastAgentViewModel", "Both engines initialized successfully")
                     _uiState.value = StudyUiState.Ready
                 } else {
-                    val errorMsg = buildString {
-                        append("Init failed. ")
-                        if (wError != null) append("STT: $wError. ")
-                        if (pError != null) append("TTS: $pError. ")
-                    }
-                    android.util.Log.e("PodcastAgentViewModel", errorMsg)
+                    val errorMsg = "Init failed. STT: $wError, TTS: $pError"
                     _uiState.value = StudyUiState.Error(errorMsg)
                 }
             } catch (e: Exception) {
-                android.util.Log.e("PodcastAgentViewModel", "Critical failure during init", e)
                 _uiState.value = StudyUiState.Error("Critical failure: ${e.message}")
             }
         }
@@ -84,11 +77,22 @@ class PodcastAgentViewModel(application: Application) : AndroidViewModel(applica
         _uiState.value = StudyUiState.Ready
     }
 
-    fun startSession(deckId: Long) {
-        if (_uiState.value is StudyUiState.Error) {
-            android.util.Log.e("PodcastAgentViewModel", "Cannot start session: Engines in error state")
-            return
+    fun setVoiceSpeed(speed: Float) {
+        piperEngine.setSpeed(speed)
+    }
+
+    fun syncWithAnkiDroid() {
+        viewModelScope.launch(Dispatchers.IO) {
+            _syncEvent.value = null
+            ankiRepository.getDeckList() 
+            _syncEvent.value = "SYNC COMPLETE"
+            delay(2000)
+            _syncEvent.value = null
         }
+    }
+
+    fun startSession(deckId: Long) {
+        if (_uiState.value is StudyUiState.Error) return
         
         currentDeckId = deckId
         dueNotes.clear()
@@ -96,18 +100,13 @@ class PodcastAgentViewModel(application: Application) : AndroidViewModel(applica
         
         viewModelScope.launch(Dispatchers.IO) {
             _uiState.value = StudyUiState.Loading("FETCHING CARDS...")
-            android.util.Log.d("PodcastAgentViewModel", "Fetching cards for deck: $deckId")
             val allNotes = ankiRepository.getDueCards(deckId)
-            android.util.Log.d("PodcastAgentViewModel", "AnkiRepository returned ${allNotes.size} cards")
-            
             dueNotes = allNotes.take(sessionSize).toMutableList()
             currentIndex = 0
             
             if (dueNotes.isNotEmpty()) {
-                android.util.Log.d("PodcastAgentViewModel", "Starting study loop with ${dueNotes.size} cards")
                 studyLoop()
             } else {
-                android.util.Log.w("PodcastAgentViewModel", "No cards to study, finishing session")
                 _uiState.value = StudyUiState.Finished
             }
         }
@@ -115,52 +114,56 @@ class PodcastAgentViewModel(application: Application) : AndroidViewModel(applica
 
     private suspend fun studyLoop() {
         while (currentIndex < dueNotes.size) {
-
             val note = dueNotes[currentIndex]
             
             // 1. Transition/Intro
             if (currentIndex == 0) {
-                piperEngine.speak("Alright, let's dive into your session. First card coming up.")
-                delay(1000)
+                piperEngine.speak("Alright, let's dive into your session.")
+                delay(2000)
             } else {
                 val fillers = listOf("Moving on...", "Next one.", "Let's see...", "How about this?")
                 piperEngine.speak(fillers.random())
-                delay(500)
+                delay(1500)
             }
 
             // 2. Speak Question
             _uiState.value = StudyUiState.SpeakingQuestion(note.front)
             piperEngine.speak(note.front)
-            delay(1000)
+            delay(2000 + (note.front.length * 40L)) 
 
-            // 3. Listen for user thinking/response
+            // 3. Listen for user response
             _uiState.value = StudyUiState.Listening
-            val transcription = whisperEngine.listen(durationMs = 4000).lowercase()
+            whisperEngine.listen(durationMs = 4000)
             
             // 4. Reveal Answer
-            _uiState.value = StudyUiState.SpeakingAnswer(note.back)
-            piperEngine.speak("The answer is ${note.back}. How did you do?")
+            _uiState.value = StudyUiState.Transcribing
+            delay(800) 
             
-            // 5. Listen for Grade
+            _uiState.value = StudyUiState.SpeakingAnswer(note.back)
+            piperEngine.speak("The answer is ${note.back}.")
+            delay(2000 + (note.back.length * 40L))
+            
+            // 5. Ask for Grade
             _uiState.value = StudyUiState.Listening
-            val gradeText = whisperEngine.listen(durationMs = 3000).lowercase()
+            val gradeAudio = whisperEngine.listen(durationMs = 3000)
+            
+            _uiState.value = StudyUiState.Transcribing
+            val gradeText = gradeAudio.lowercase()
             
             val ease = when {
                 gradeText.contains("easy") -> 4
                 gradeText.contains("good") || gradeText.contains("fine") -> 3
                 gradeText.contains("hard") -> 2
                 gradeText.contains("again") || gradeText.contains("don't know") -> 1
-                else -> 3 // Default to Good
+                else -> 3 
             }
 
             ankiRepository.answerCard(note.id, ease)
             currentIndex++
-            
-            delay(1000)
+            delay(500)
         }
         _uiState.value = StudyUiState.Finished
     }
-
 
     override fun onCleared() {
         super.onCleared()
@@ -175,6 +178,7 @@ sealed class StudyUiState {
     data class Configuring(val deckId: Long) : StudyUiState()
     data class SpeakingQuestion(val text: String) : StudyUiState()
     object Listening : StudyUiState()
+    object Transcribing : StudyUiState()
     data class SpeakingAnswer(val text: String) : StudyUiState()
     object Finished : StudyUiState()
     data class Error(val message: String) : StudyUiState()
